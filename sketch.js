@@ -7,6 +7,12 @@ function setup() {
   initializeGrid()
 }
 
+
+
+function draw() {
+  background(220);
+  renderGrid();
+}
 function initializeGrid() {
   for (let i = 0; i < grid.length; i++)
     grid[i] = new Array(cols)
@@ -17,12 +23,6 @@ function initializeGrid() {
     }
   }
 }
-
-function draw() {
-  background(220);
-  renderGrid();
-}
-
 function renderGrid() {
   for (let i = 0; i < grid.length; i++) {
     for (let j = 0; j < grid[0].length; j++)
