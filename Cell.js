@@ -3,7 +3,10 @@ class Cell {
         this.x = x;
         this.y = y;
         this.w = w
-        this.parent={x:-1,y:-1};
+        this.parent = {
+            x: -1,
+            y: -1
+        };
         this.color = color
     }
     show() {

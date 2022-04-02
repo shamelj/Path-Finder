@@ -3,15 +3,15 @@ class Grid {
     constructor(rows, cols) {
         this.rows = rows
         this.cols = cols
-        this.sideLength = min(height,width)/max(rows,cols)
+        this.sideLength = min(int(height / rows), int(width / cols))
         this.grid = []
         this.source = {
-            x: 0,
-            y: 0
+            x: -1,
+            y: -1
         };
         this.target = {
-            x: rows - 1,
-            y: cols - 1
+            x: -1,
+            y: -1
         };
         this.initializeGrid();
 
@@ -30,8 +30,10 @@ class Grid {
     }
 
     setSource(i, j) {
-        this.grid[this.source.x][this.source.y].color = unvisitedColor
-        this.grid[this.source.x][this.source.y].show()
+        if (this.source.x != -1) {
+            this.grid[this.source.x][this.source.y].color = unvisitedColor
+            this.grid[this.source.x][this.source.y].show()
+        }
         this.source = {
             x: i,
             y: j
@@ -39,8 +41,10 @@ class Grid {
         this.grid[i][j].color = sourceColor
     }
     setTarget(i, j) {
-        this.grid[this.target.x][this.target.y].color = unvisitedColor
-        this.grid[this.target.x][this.target.y].show()
+        if (this.target.x != -1) {
+            this.grid[this.target.x][this.target.y].color = unvisitedColor
+            this.grid[this.target.x][this.target.y].show()
+        }
         this.target = {
             x: i,
             y: j

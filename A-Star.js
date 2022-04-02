@@ -1,8 +1,5 @@
-//const PriorityQueue = require("./priority-queue");
-
 class A_Star extends Search {
     constructor(maze) {
-        //this.maze = new Grid();
         super(maze);
 
         this.g = [
@@ -15,7 +12,7 @@ class A_Star extends Search {
         this.initializeH()
         this.pQueue = new PriorityQueue({
             comparator: (a, b) => {
-                    return (this.g[a.x][a.y] + this.h[a.x][a.y]) - (this.g[b.x][b.y] + this.h[b.x][b.y])
+                return (this.g[a.x][a.y] + this.h[a.x][a.y]) - (this.g[b.x][b.y] + this.h[b.x][b.y])
             }
         })
         this.initializeQueue()
@@ -60,8 +57,11 @@ class A_Star extends Search {
         const node = this.pQueue.dequeue()
         const i = node.x,
             j = node.y;
-        this.cellsToRender.push({x:i,y:j});
-        this.maze.grid[i][j].color = (this.maze.grid[i][j].color!= sourceColor)?visitedColor: sourceColor;
+        this.cellsToRender.push({
+            x: i,
+            y: j
+        });
+        this.maze.grid[i][j].color = (this.maze.grid[i][j].color != sourceColor) ? visitedColor : sourceColor;
         const directions = [
             [0, 1],
             [1, 0],
@@ -71,21 +71,23 @@ class A_Star extends Search {
         for (const direction of directions) { // adding neighbours
             let x = i + direction[0],
                 y = j + direction[1];
-            if (x < 0 || y < 0 || x >= this.maze.rows || y >= this.maze.cols || [unvisitedColor,targetColor].indexOf(this.maze.grid[x][y].color) ==-1)
+            if (x < 0 || y < 0 || x >= this.maze.rows || y >= this.maze.cols || [unvisitedColor, targetColor].indexOf(this.maze.grid[x][y].color) == -1)
                 continue;
             this.maze.grid[x][y].parent = {
                 x: i,
                 y: j
             };
             this.g[x][y] = min(this.g[x][y], this.g[i][j] + 1)
-            if (this.maze.reachedTarget())
-                {
-                    this.showPath();
-                    this.renderGrid();
-                    return;
-                }
+            if (this.maze.reachedTarget()) {
+                this.showPath();
+                this.renderGrid();
+                return;
+            }
             this.maze.grid[x][y].color = exploredColor;
-            this.cellsToRender.push({x:x,y:y});
+            this.cellsToRender.push({
+                x: x,
+                y: y
+            });
             this.pQueue.queue({
                 x: x,
                 y: y

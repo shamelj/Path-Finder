@@ -1,5 +1,7 @@
 // navigation elements
 let slider;
+let algorithmSelector;
+let rowInput, colInput;
 // Main Colors
 let blockColor = '#0a3747';
 let unvisitedColor = 'darkgrey';
@@ -15,13 +17,29 @@ let sourceIsPicked = true,
 isPaused = true;
 
 function reset(rows, cols) {
+    background('white')
     sourceIsPicked = true;
     targetIsPicked = true;
     blocksArePicked = true;
     isPaused = true;
     maze = new Grid(rows, cols);
-    background('pink')
-    slider = createSlider(1, 60, 30)
+    maze.renderGrid();
+}
+
+function initializeButtons() {
+    initializeStart()
+    initializeSourceButton()
+    // Target Button
+    initializeTargetButton()
+    // Blocks Button
+    initializeBlocksButton()
+    // Algorithm Selector
+    initializeAlgorithmSelector()
+    // Reset button
+    initializeResetButton()
+    //
+    initializeRowColInput()
+
 }
 
 function initializeStart() {
@@ -30,7 +48,7 @@ function initializeStart() {
     let startBtn = createButton('Paused', false);
     startBtn.style('background-color: red')
     startBtn.mouseClicked(() => {
-        if (sourceIsPicked && targetIsPicked) {
+        if (maze.source.x != -1 && maze.target.x != -1) {
             if (isPaused) {
                 startBtn.html('Started')
                 startBtn.style('background-color: green')
@@ -38,7 +56,10 @@ function initializeStart() {
                 startBtn.html('Paused')
                 startBtn.style('background-color: red')
             }
-            searchAlgorithm = new A_Star(maze);
+            if (algorithmSelector.value() == 'A*')
+                searchAlgorithm = new A_Star(maze);
+            else if (algorithmSelector.value() == 'BFS')
+                searchAlgorithm = new BFS(maze);
             isPaused = !isPaused;
         }
     });
@@ -65,18 +86,28 @@ function initializeBlocksButton() {
         blocksArePicked = !blocksArePicked;
     })
 }
-function initializeResetButton(){
+
+function initializeResetButton() {
     let resetBtn = createButton('Reset');
-    resetBtn.mouseClicked(() => reset(20, 20))
+    resetBtn.mouseClicked(() => reset(20, 50))
 }
-function initializeButtons() {
-    initializeStart()
-    initializeSourceButton()
-    // Target Button
-    initializeTargetButton()
-    // Blocks Button
-    initializeBlocksButton()
-    // reset button
-    
+
+function initializeAlgorithmSelector() {
+    algorithmSelector = createSelect();
+    algorithmSelector.position(10, 10);
+    algorithmSelector.option('A*');
+    algorithmSelector.option('BFS');
+    algorithmSelector.selected('A*');
+    algorithmSelector.position(0, 0, 'static')
+}
+
+function initializeRowColInput() {
+    createSpan(' rows: ');
+    rowInput = createSlider(5, 80, 20);
+    createSpan(' colums:')
+    colInput = createSlider(5, 140, 50);
+    rowInput.changed(() => reset(parseInt(rowInput.value()), parseInt(colInput.value())))
+    colInput.changed(() => reset(parseInt(rowInput.value()), parseInt(colInput.value())))
+
 
 }

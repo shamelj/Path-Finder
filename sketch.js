@@ -3,19 +3,17 @@ let maze
 let searchAlgorithm;
 
 function setup() {
-  createCanvas(1000, 600).position(0, 0, 'static');
+  createCanvas(1200, 600).position(0, 0, 'static');
   background('pink')
   slider = createSlider(1, 60, 30)
-  maze = new Grid(25, 25);
+  reset(20, 50)
   initializeButtons()
 }
 
 function draw() {
   frameRate(slider.value())
-  //background(220);
   if (mouseIsPressed === true) {
     mouseClicked()
-
   }
   if (!isPaused)
     searchAlgorithm.search();
@@ -23,9 +21,10 @@ function draw() {
 }
 
 function mouseClicked() {
-  if (mouseX >= min(maze.cols, maze.rows) * maze.sideLength || mouseY >= min(maze.cols, maze.rows) * maze.sideLength)
+  if (!mouseInRange())
     return;
   let clickedCell = getCellPos(mouseX, mouseY)
+  console.log(clickedCell)
   if (!sourceIsPicked) {
     maze.setSource(clickedCell.x, clickedCell.y);
     sourceIsPicked = true
@@ -45,11 +44,20 @@ function mouseClicked() {
   maze.grid[clickedCell.x][clickedCell.y].show()
 }
 
+function mouseInRange() {
+  let gridWidth = maze.cols * maze.sideLength
+  let gridHeight = maze.rows * maze.sideLength
+  if (mouseX >= gridWidth || mouseY >= gridHeight || mouseX <= 0 || mouseY <= 0)
+    return false;
+  return true;
+
+}
+
 function getCellPos(i, j) { //  (i,j) vertex on canvas
   let x = i - i % maze.sideLength;
   let y = j - j % maze.sideLength;
   return { // (x,y) indices on grid[][]
-    x: y / maze.sideLength,
-    y: x / maze.sideLength
+    x: ceil(y / maze.sideLength),
+    y: ceil(x / maze.sideLength)
   };
 }
