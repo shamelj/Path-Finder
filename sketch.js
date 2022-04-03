@@ -1,6 +1,6 @@
 // main functioning objects
 let maze
-let searchAlgorithm;
+let searchAlgorithm = null;
 
 function setup() {
   createCanvas(1200, 600).position(0, 0, 'static');

@@ -56,10 +56,12 @@ function initializeStart() {
                 startBtn.html('Paused')
                 startBtn.style('background-color: red')
             }
-            if (algorithmSelector.value() == 'A*')
-                searchAlgorithm = new A_Star(maze);
-            else if (algorithmSelector.value() == 'BFS')
-                searchAlgorithm = new BFS(maze);
+            if (searchAlgorithm == null) {
+                if (algorithmSelector.value() == 'A*')
+                    searchAlgorithm = new A_Star(maze);
+                else if (algorithmSelector.value() == 'BFS')
+                    searchAlgorithm = new BFS(maze);
+            }
             isPaused = !isPaused;
         }
     });
