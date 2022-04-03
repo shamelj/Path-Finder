@@ -1,5 +1,5 @@
 // main functioning objects
-let maze
+let grid
 let searchAlgorithm = null;
 
 function setup() {
@@ -23,10 +23,10 @@ function mouseClicked() {
   let i = cellPos.i,
     j = cellPos.j;
   if (state == sourceTurn) {
-    maze.setSource(i, j);
+    grid.setSource(i, j);
     state = -1;
   } else if (state == targetTurn) {
-    maze.setTarget(i, j);
+    grid.setTarget(i, j);
     state = -1;
   }
 }
@@ -38,13 +38,13 @@ function mouseDragged() {
   let i = cellPos.i,
     j = cellPos.j;
   if (state == blockTurn) {
-    maze.setBlock(i, j);
+    grid.setBlock(i, j);
   }
 }
 
 function mouseInRange() {
-  let gridWidth = maze.cols * maze.sideLength
-  let gridHeight = maze.rows * maze.sideLength
+  let gridWidth = grid.cols * grid.sideLength
+  let gridHeight = grid.rows * grid.sideLength
   if (mouseX >= gridWidth || mouseY >= gridHeight || mouseX <= 0 || mouseY <= 0)
     return false;
   return true;
@@ -52,10 +52,10 @@ function mouseInRange() {
 }
 
 function getCellPos(x, y) {
-  let i = x - x % maze.sideLength;
-  let j = y - y % maze.sideLength;
+  let i = x - x % grid.sideLength;
+  let j = y - y % grid.sideLength;
   return {
-    i: ceil(j / maze.sideLength),
-    j: ceil(i / maze.sideLength)
+    i: ceil(j / grid.sideLength),
+    j: ceil(i / grid.sideLength)
   };
 }

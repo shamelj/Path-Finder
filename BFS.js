@@ -1,7 +1,7 @@
 class BFS extends Search {
     #queue;
-    constructor(maze) {
-        super(maze);
+    constructor(grid) {
+        super(grid);
         this.#queue = [
             []
         ];
@@ -9,25 +9,25 @@ class BFS extends Search {
     }
     #initializeQueue() {
         this.#queue = [
-            [this.maze.source.x, this.maze.source.y]
+            [this.grid.source.x, this.grid.source.y]
         ];
     }
     singleSearchIteration() {
-        if (this.maze.reachedTarget()){
-            this.maze.showPath()
+        if (this.grid.reachedTarget()){
+            this.grid.showPath()
             return
         }
 
         let q2 = []
-        while (!this.maze.reachedTarget() && this.#queue.length > 0) { // iterate over all the cells on the current level only       
+        while (!this.grid.reachedTarget() && this.#queue.length > 0) { // iterate over all the cells on the current level only       
             const cell = this.#queue.pop()
-            this.maze.cellsToRender.push({x:cell[0],y:cell[1]})
-            if (cell[0] != this.maze.source.x || cell[1] != this.maze.source.y)
-                this.maze.grid[cell[0]][cell[1]].color = visitedColor
+            this.grid.cellsToRender.push({x:cell[0],y:cell[1]})
+            if (cell[0] != this.grid.source.x || cell[1] != this.grid.source.y)
+                this.grid.matrix[cell[0]][cell[1]].color = visitedColor
             this.#addNeighbours(cell[0], cell[1], q2);
         }
         this.#queue = q2;
-        this.maze.renderExplored();
+        this.grid.renderExplored();
     }
     #addNeighbours(i, j, q2) {
         const directions = [
@@ -41,14 +41,14 @@ class BFS extends Search {
                 y = j + direction[1];
             if (this.shouldntExplore(x,y))
                 continue;
-            this.maze.grid[x][y].parent = {
+            this.grid.matrix[x][y].parent = {
                 x: i,
                 y: j
             };
-            if (this.maze.reachedTarget())
+            if (this.grid.reachedTarget())
                 return;
-            this.maze.grid[x][y].color = exploredColor;
-            this.maze.cellsToRender.push({x:x,y:y})
+            this.grid.matrix[x][y].color = exploredColor;
+            this.grid.cellsToRender.push({x:x,y:y})
             q2.push([x, y]);
         }
 

@@ -4,7 +4,7 @@ class Grid {
         this.rows = rows
         this.cols = cols
         this.sideLength = min(int(height / rows), int(width / cols))
-        this.grid = []
+        this.matrix = []
         this.cellsToRender = [];
         this.source = {
             x: -1,
@@ -24,17 +24,17 @@ class Grid {
         return this.target.x != -1;
     }
     getCellAt(i, j) {
-        return this.grid[i][j]
+        return this.matrix[i][j]
     }
 
     initializeGrid() {
-        this.grid = (new Array(this.rows));
-        for (let i = 0; i < this.grid.length; i++)
-            this.grid[i] = new Array(this.cols);
+        this.matrix = (new Array(this.rows));
+        for (let i = 0; i < this.matrix.length; i++)
+            this.matrix[i] = new Array(this.cols);
 
-        for (let i = 0; i < this.grid.length; i++) {
-            for (let j = 0; j < this.grid[i].length; j++) {
-                this.grid[i][j] = new Cell(j * this.sideLength, i * this.sideLength, this.sideLength, unvisitedColor)
+        for (let i = 0; i < this.matrix.length; i++) {
+            for (let j = 0; j < this.matrix[i].length; j++) {
+                this.matrix[i][j] = new Cell(j * this.sideLength, i * this.sideLength, this.sideLength, unvisitedColor)
             }
         }
     }
@@ -43,15 +43,15 @@ class Grid {
         if (this.#isTargetAt(i, j))
             return;
         if (this.source.x != -1) {
-            this.grid[this.source.x][this.source.y].color = unvisitedColor
-            this.grid[this.source.x][this.source.y].show()
+            this.matrix[this.source.x][this.source.y].color = unvisitedColor
+            this.matrix[this.source.x][this.source.y].show()
         }
         this.source = {
             x: i,
             y: j
         };
-        this.grid[i][j].color = sourceColor
-        this.grid[i][j].show();
+        this.matrix[i][j].color = sourceColor
+        this.matrix[i][j].show();
     }
     #isSourceAt(i, j) {
         return i == this.source.x && j == this.source.y;
@@ -64,15 +64,15 @@ class Grid {
         if (this.#isSourceAt(i, j))
             return;
         if (this.target.x != -1) {
-            this.grid[this.target.x][this.target.y].color = unvisitedColor
-            this.grid[this.target.x][this.target.y].show()
+            this.matrix[this.target.x][this.target.y].color = unvisitedColor
+            this.matrix[this.target.x][this.target.y].show()
         }
         this.target = {
             x: i,
             y: j
         };
-        this.grid[i][j].color = targetColor
-        this.grid[i][j].show();
+        this.matrix[i][j].color = targetColor
+        this.matrix[i][j].show();
     }
     setBlock(i, j) {
         if (this.#isSourceAt(i,j) || this.#isTargetAt(i,j))
@@ -81,13 +81,13 @@ class Grid {
         this.getCellAt(i,j).show();
     }
     renderGrid() {
-        for (let i = 0; i < this.grid.length; i++) {
-            for (let j = 0; j < this.grid[0].length; j++)
-                this.grid[i][j].show();
+        for (let i = 0; i < this.matrix.length; i++) {
+            for (let j = 0; j < this.matrix[0].length; j++)
+                this.matrix[i][j].show();
         }
     }
     reachedTarget() {
-        return (this.grid[this.target.x][this.target.y].parent.x != -1)
+        return (this.matrix[this.target.x][this.target.y].parent.x != -1)
     }
     showPath() {
         if (!this.reachedTarget())
@@ -100,9 +100,9 @@ class Grid {
                 x: x,
                 y: y
             })
-            let parent = this.grid[x][y].parent
-            this.grid[x][y].color = pathColor;
-            this.grid[x][y].show()
+            let parent = this.matrix[x][y].parent
+            this.matrix[x][y].color = pathColor;
+            this.matrix[x][y].show()
             x = parent.x;
             y = parent.y;
 
@@ -113,7 +113,7 @@ class Grid {
     renderExplored() {
         for (let i = this.cellsToRender.length - 1; i >= 0; i--) {
             const cell = this.cellsToRender[i];
-            this.grid[cell.x][cell.y].show();
+            this.matrix[cell.x][cell.y].show();
             this.cellsToRender.pop()
         }
 

@@ -21,13 +21,13 @@ let state = -1,
 function reset(rows, cols) {
     background('white')
     state = -1;
-    maze = new Grid(rows, cols);
+    grid = new Grid(rows, cols);
     searchAlgorithm = null;
     if (startBtn != null) {
         startBtn.html('Paused')
         startBtn.style('background-color: red')
     }
-    maze.renderGrid();
+    grid.renderGrid();
 }
 
 function initializeButtons() {
@@ -52,11 +52,11 @@ function initializeButtons() {
 
 function initializeStart() {
     // start-pause button
-    maze.renderGrid()
+    grid.renderGrid()
     startBtn = createButton('Paused', false);
     startBtn.style('background-color: red')
     startBtn.mouseClicked(() => {
-        if (maze.sourceIsPicked() && maze.targetIsPicked()) {
+        if (grid.sourceIsPicked() && grid.targetIsPicked()) {
             if (state != isRunning) {
                 startBtn.html('Started')
                 startBtn.style('background-color: green')
@@ -68,9 +68,9 @@ function initializeStart() {
             }
             if (searchAlgorithm == null) {
                 if (algorithmSelector.value() == 'A*')
-                    searchAlgorithm = new A_Star(maze);
+                    searchAlgorithm = new A_Star(grid);
                 else if (algorithmSelector.value() == 'BFS')
-                    searchAlgorithm = new BFS(maze);
+                    searchAlgorithm = new BFS(grid);
             }
         }
     });
