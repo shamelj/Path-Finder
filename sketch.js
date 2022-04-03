@@ -5,43 +5,41 @@ let searchAlgorithm = null;
 function setup() {
   createCanvas(1200, 600).position(0, 0, 'static');
   background('pink')
-  slider = createSlider(1, 60, 30)
-  reset(20, 50)
+  reset(14, 14)
   initializeButtons()
 }
 
 function draw() {
-  frameRate(slider.value())
-  if (mouseIsPressed === true) {
-    mouseClicked()
-  }
-  if (!isPaused)
-    searchAlgorithm.search();
+  frameRate(SpeedSlider.value())
+  if (state == isRunning)
+    searchAlgorithm.singleSearchIteration();
 
 }
 
 function mouseClicked() {
   if (!mouseInRange())
     return;
-  let clickedCell = getCellPos(mouseX, mouseY)
-  console.log(clickedCell)
-  if (!sourceIsPicked) {
-    maze.setSource(clickedCell.x, clickedCell.y);
-    sourceIsPicked = true
-  } else if (!targetIsPicked) {
-    if (clickedCell.x == maze.source.x && clickedCell.y == maze.source.y)
-      return;
-    maze.setTarget(clickedCell.x, clickedCell.y);
-    targetIsPicked = true
-
-  } else if (!blocksArePicked) {
-    if (clickedCell.x == maze.source.x && clickedCell.y == maze.source.y)
-      return;
-    if (clickedCell.x == maze.target.x && clickedCell.y == maze.target.y)
-      return;
-    maze.grid[clickedCell.x][clickedCell.y].color = blockColor
+  let cellPos = getCellPos(mouseX,mouseY);
+  let i = cellPos.i,
+    j = cellPos.j;
+  if (state == sourceTurn) {
+    maze.setSource(i, j);
+    state = -1;
+  } else if (state == targetTurn) {
+    maze.setTarget(i, j);
+    state = -1;
   }
-  maze.grid[clickedCell.x][clickedCell.y].show()
+}
+
+function mouseDragged() {
+  if (!mouseInRange())
+    return;
+  let cellPos = getCellPos(mouseX,mouseY);
+  let i = cellPos.i,
+    j = cellPos.j;
+  if (state == blockTurn) {
+    maze.setBlock(i, j);
+  }
 }
 
 function mouseInRange() {
@@ -53,11 +51,11 @@ function mouseInRange() {
 
 }
 
-function getCellPos(i, j) { //  (i,j) vertex on canvas
-  let x = i - i % maze.sideLength;
-  let y = j - j % maze.sideLength;
-  return { // (x,y) indices on grid[][]
-    x: ceil(y / maze.sideLength),
-    y: ceil(x / maze.sideLength)
+function getCellPos(x, y) {
+  let i = x - x % maze.sideLength;
+  let j = y - y % maze.sideLength;
+  return {
+    i: ceil(j / maze.sideLength),
+    j: ceil(i / maze.sideLength)
   };
 }

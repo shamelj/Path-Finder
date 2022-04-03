@@ -1,35 +1,35 @@
 class BFS extends Search {
+    #queue;
     constructor(maze) {
         super(maze);
-        this.queue = [
+        this.#queue = [
             []
         ];
-        this.initializeQueue();
+        this.#initializeQueue();
     }
-    initializeQueue() {
-        this.queue = [
+    #initializeQueue() {
+        this.#queue = [
             [this.maze.source.x, this.maze.source.y]
         ];
     }
-    search() {
+    singleSearchIteration() {
         if (this.maze.reachedTarget()){
-            this.showPath()
-            this.renderGrid();
+            this.maze.showPath()
             return
         }
 
         let q2 = []
-        while (!this.maze.reachedTarget() && this.queue.length > 0) { // iterate over all the cells on the current level only       
-            const cell = this.queue.pop()
-            this.cellsToRender.push({x:cell[0],y:cell[1]})
+        while (!this.maze.reachedTarget() && this.#queue.length > 0) { // iterate over all the cells on the current level only       
+            const cell = this.#queue.pop()
+            this.maze.cellsToRender.push({x:cell[0],y:cell[1]})
             if (cell[0] != this.maze.source.x || cell[1] != this.maze.source.y)
                 this.maze.grid[cell[0]][cell[1]].color = visitedColor
-            this.addNeighbours(cell[0], cell[1], q2);
+            this.#addNeighbours(cell[0], cell[1], q2);
         }
-        this.queue = q2;
-        this.renderGrid()
+        this.#queue = q2;
+        this.maze.renderExplored();
     }
-    addNeighbours(i, j, q2) {
+    #addNeighbours(i, j, q2) {
         const directions = [
             [0, 1],
             [1, 0],
@@ -39,7 +39,7 @@ class BFS extends Search {
         for (const direction of directions) { // adding neighbours
             let x = i + direction[0],
                 y = j + direction[1];
-            if (x < 0 || y < 0 || x >= this.maze.rows || y >= this.maze.cols || [unvisitedColor,targetColor].indexOf(this.maze.grid[x][y].color) ==-1)
+            if (this.shouldntExplore(x,y))
                 continue;
             this.maze.grid[x][y].parent = {
                 x: i,
@@ -48,7 +48,7 @@ class BFS extends Search {
             if (this.maze.reachedTarget())
                 return;
             this.maze.grid[x][y].color = exploredColor;
-            this.cellsToRender.push({x:x,y:y})
+            this.maze.cellsToRender.push({x:x,y:y})
             q2.push([x, y]);
         }
 

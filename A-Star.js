@@ -1,67 +1,62 @@
 class A_Star extends Search {
+    #g;
+    #pQueue;
     constructor(maze) {
         super(maze);
 
-        this.g = [
+        this.#g = [
             []
         ]; // cost from start to node g(n)
-        this.h = [
-            []
-        ]; // estimated cost from node to target h(n)
-        this.initializeG()
-        this.initializeH()
-        this.pQueue = new PriorityQueue({
+        
+        this.#initializeG()
+        this.#pQueue = new PriorityQueue({
             comparator: (a, b) => {
-                return (this.g[a.x][a.y] + this.h[a.x][a.y]) - (this.g[b.x][b.y] + this.h[b.x][b.y])
+                return (this.#g[a.x][a.y] + this.#h(a.x,a.y)) - (this.#g[b.x][b.y] + this.#h(b.x,b.y))
             }
         })
-        this.initializeQueue()
+        this.#initializeQueue()
     }
-    initializeQueue() {
-        this.pQueue.queue({
+    #initializeQueue() {
+        this.#pQueue.queue({
             x: this.maze.source.x,
             y: this.maze.source.y
         })
     }
-    initializeG() {
-        this.g = (new Array(this.maze.rows));
-        for (let i = 0; i < this.g.length; i++)
-            this.g[i] = new Array(this.maze.cols);
+    #initializeG() {
+        this.#g = (new Array(this.maze.rows));
+        for (let i = 0; i < this.#g.length; i++)
+            this.#g[i] = new Array(this.maze.cols);
 
-        for (let i = 0; i < this.g.length; i++) {
-            for (let j = 0; j < this.g[i].length; j++) {
-                this.g[i][j] = Infinity;
+        for (let i = 0; i < this.#g.length; i++) {
+            for (let j = 0; j < this.#g[i].length; j++) {
+                this.#g[i][j] = Infinity;
             }
         }
-        this.g[this.maze.source.x][this.maze.source.y] = 0;
+        this.#g[this.maze.source.x][this.maze.source.y] = 0;
     }
-    initializeH() {
-        this.h = (new Array(this.maze.rows));
-        for (let i = 0; i < this.h.length; i++)
-            this.h[i] = new Array(this.maze.cols);
-
-        for (let i = 0; i < this.h.length; i++) {
-            for (let j = 0; j < this.h[i].length; j++) {
-                this.h[i][j] = abs(this.maze.target.x - i) + abs(this.maze.target.y - j);
-            }
-        }
-
+    #h(i,j){ // estimated cost function
+        return abs(this.maze.target.x - i) + abs(this.maze.target.y - j);
     }
-    search() {
+    singleSearchIteration() {
         if (this.maze.reachedTarget()) {
-            this.renderGrid()
+            this.maze.renderExplored()
             return
         }
-        if (this.pQueue.length == 0)
+        if (this.#pQueue.length == 0)
             return;
-        const node = this.pQueue.dequeue()
+        const node = this.#pQueue.dequeue()
         const i = node.x,
             j = node.y;
-        this.cellsToRender.push({
+        this.maze.cellsToRender.push({
             x: i,
             y: j
         });
         this.maze.grid[i][j].color = (this.maze.grid[i][j].color != sourceColor) ? visitedColor : sourceColor;
+        this.#addNeighbours(i,j)
+        this.maze.renderExplored()
+
+    }
+    #addNeighbours(i, j) {
         const directions = [
             [0, 1],
             [1, 0],
@@ -71,30 +66,28 @@ class A_Star extends Search {
         for (const direction of directions) { // adding neighbours
             let x = i + direction[0],
                 y = j + direction[1];
-            if (x < 0 || y < 0 || x >= this.maze.rows || y >= this.maze.cols || [unvisitedColor, targetColor].indexOf(this.maze.grid[x][y].color) == -1)
+            if (this.shouldntExplore(x,y))
                 continue;
             this.maze.grid[x][y].parent = {
                 x: i,
                 y: j
             };
-            this.g[x][y] = min(this.g[x][y], this.g[i][j] + 1)
+            this.#g[x][y] = min(this.#g[x][y], this.#g[i][j] + 1)
             if (this.maze.reachedTarget()) {
-                this.showPath();
-                this.renderGrid();
+                this.maze.showPath();
+                this.maze.renderExplored();
                 return;
             }
             this.maze.grid[x][y].color = exploredColor;
-            this.cellsToRender.push({
+            this.maze.cellsToRender.push({
                 x: x,
                 y: y
             });
-            this.pQueue.queue({
+            this.#pQueue.queue({
                 x: x,
                 y: y
             });
         }
-        this.renderGrid()
-
     }
 
 }

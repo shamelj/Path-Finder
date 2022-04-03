@@ -1,33 +1,41 @@
 // navigation elements
-let slider;
+let startBtn;
+let SpeedSlider;
 let algorithmSelector;
-let rowInput, colInput;
 // Main Colors
 let blockColor = '#0a3747';
 let unvisitedColor = 'darkgrey';
 let visitedColor = '#2fa8d4';
 let exploredColor = 'yellow'
 let targetColor = '#fa001d'
-let sourceColor = '#2ecc12'
-let pathColor = '#66139e'
-//Starting up booleans
-let sourceIsPicked = true,
-    targetIsPicked = true,
-    blocksArePicked = true;
-isPaused = true;
+let sourceColor = '#08800e'
+let pathColor = '#07f58a'
+//flow control
+let state = -1,
+    sourceTurn = 0,
+    targetTurn = 1,
+    blockTurn = 2,
+    isRunning = 4;
+
 
 function reset(rows, cols) {
     background('white')
-    sourceIsPicked = true;
-    targetIsPicked = true;
-    blocksArePicked = true;
-    isPaused = true;
+    state = -1;
     maze = new Grid(rows, cols);
+    searchAlgorithm = null;
+    if (startBtn != null) {
+        startBtn.html('Paused')
+        startBtn.style('background-color: red')
+    }
     maze.renderGrid();
 }
 
 function initializeButtons() {
+    // Speed Slider
+    initializeSpeedSlider();
+    // Start Button
     initializeStart()
+    // Source button
     initializeSourceButton()
     // Target Button
     initializeTargetButton()
@@ -37,7 +45,7 @@ function initializeButtons() {
     initializeAlgorithmSelector()
     // Reset button
     initializeResetButton()
-    //
+    // row and column input slider 
     initializeRowColInput()
 
 }
@@ -45,16 +53,18 @@ function initializeButtons() {
 function initializeStart() {
     // start-pause button
     maze.renderGrid()
-    let startBtn = createButton('Paused', false);
+    startBtn = createButton('Paused', false);
     startBtn.style('background-color: red')
     startBtn.mouseClicked(() => {
-        if (maze.source.x != -1 && maze.target.x != -1) {
-            if (isPaused) {
+        if (maze.sourceIsPicked() && maze.targetIsPicked()) {
+            if (state != isRunning) {
                 startBtn.html('Started')
                 startBtn.style('background-color: green')
+                state = isRunning;
             } else {
                 startBtn.html('Paused')
                 startBtn.style('background-color: red')
+                state = -1;
             }
             if (searchAlgorithm == null) {
                 if (algorithmSelector.value() == 'A*')
@@ -62,36 +72,40 @@ function initializeStart() {
                 else if (algorithmSelector.value() == 'BFS')
                     searchAlgorithm = new BFS(maze);
             }
-            isPaused = !isPaused;
         }
     });
+}
+
+function initializeSpeedSlider() {
+    createSpan(' Speed: ')
+    SpeedSlider = createSlider(1, 60, 30)
 }
 
 function initializeSourceButton() {
     // source Button
     let sourceBtn = createButton('Pick Source', '');
     sourceBtn.mouseClicked(() => {
-        sourceIsPicked = !sourceIsPicked;
+        state = (state != isRunning) ? sourceTurn : isRunning;
     })
 }
 
 function initializeTargetButton() {
     let targetBtn = createButton('Pick Target', '');
     targetBtn.mouseClicked(() => {
-        targetIsPicked = !targetIsPicked;
+        state = (state != isRunning) ? targetTurn : isRunning;
     })
 }
 
 function initializeBlocksButton() {
     let blocksBtn = createButton('Pick Blocks');
     blocksBtn.mouseClicked(() => {
-        blocksArePicked = !blocksArePicked;
+        state = (state != isRunning) ? blockTurn : isRunning;
     })
 }
 
 function initializeResetButton() {
     let resetBtn = createButton('Reset');
-    resetBtn.mouseClicked(() => reset(20, 50))
+    resetBtn.mouseClicked(() => reset(14, 14))
 }
 
 function initializeAlgorithmSelector() {
@@ -105,11 +119,9 @@ function initializeAlgorithmSelector() {
 
 function initializeRowColInput() {
     createSpan(' rows: ');
-    rowInput = createSlider(5, 80, 20);
+    let rowInput = createSlider(5, 80, 20);
     createSpan(' colums:')
-    colInput = createSlider(5, 140, 50);
+    let colInput = createSlider(5, 140, 50);
     rowInput.changed(() => reset(parseInt(rowInput.value()), parseInt(colInput.value())))
     colInput.changed(() => reset(parseInt(rowInput.value()), parseInt(colInput.value())))
-
-
 }
