@@ -11,7 +11,9 @@ class A_Star extends Search {
         this.#initializeG()
         this.#pQueue = new PriorityQueue({
             comparator: (a, b) => {
-                return (this.#g[a.x][a.y] + this.#h(a.x,a.y)) - (this.#g[b.x][b.y] + this.#h(b.x,b.y))
+                let distA = this.#g[a.x][a.y] + this.#heuristic (a.x,a.y)*0.99;
+                let distB = this.#g[b.x][b.y] + this.#heuristic (b.x,b.y)*0.99;
+                return distA - distB;
             }
         })
         this.#initializeQueue()
@@ -34,7 +36,7 @@ class A_Star extends Search {
         }
         this.#g[this.grid.source.x][this.grid.source.y] = 0;
     }
-    #h(i,j){ // estimated cost function
+    #heuristic (i,j){ // estimated cost function
         return abs(this.grid.target.x - i) + abs(this.grid.target.y - j);
     }
     singleSearchIteration() {
