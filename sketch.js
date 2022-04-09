@@ -3,9 +3,11 @@ let grid
 let searchAlgorithm = null;
 
 function setup() {
-  createCanvas(1200, 600).position(0, 0, 'static');
-  background('pink')
-  reset(14, 14)
+  let minSide = min(windowWidth,windowHeight)*0.80
+  let canvas = createCanvas(minSide, minSide).position(0, 0, 'static');
+  canvas.parent('row0')
+  background('grey')
+  reset(20, 20)
   initializeButtons()
 }
 
@@ -29,6 +31,9 @@ function mouseClicked() {
     grid.setTarget(i, j);
     state = -1;
   }
+  else if (state == blockTurn) {
+    grid.setBlock(i, j);
+  } 
 }
 
 function mouseDragged() {

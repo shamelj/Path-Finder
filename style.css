@@ -1,8 +1,17 @@
-html, body {
-  margin: 0;
+ body {
+  margin: 5px;
   padding: 0;
+  background-image: url('resources/background.png');
+
 }
 
 canvas {
   display: block;
+  margin: 1px auto;
+}
+span,h6{
+  color: white;
+}
+h6{
+  text-align: center;
 }
